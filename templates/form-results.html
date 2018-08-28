@@ -1,0 +1,138 @@
+{% extends "base.html" %}
+{% block head %}
+    <!--Site icon-->
+    <link rel="shortcut icon" href="{{ url_for('static', filename='images/favicon.ico') }}" type="image/x-icon" />
+    <!-- Main CSS-->
+    <link rel="stylesheet" type="text/css" href="{{ url_for('static', filename='css/main.css') }}">
+    <!-- Font-icon css-->
+    <link rel="stylesheet" type="text/css" href="https://maxcdn.bootstrapcdn.com/font-awesome/4.7.0/css/font-awesome.min.css">
+
+{% endblock %}
+{% block navbar%}{% endblock %}
+{% block siderbar%}{%endblock%}
+{%block content%}
+    <main class="app-content">
+      <div class="app-title">
+        <div>
+          <h1><i class="fa fa-edit"> 检测结果</i></h1>
+        </div>
+        <ul class="app-breadcrumb breadcrumb">
+          <li class="breadcrumb-item"><i class="fa fa-home fa-lg"></i></li>
+          <li class="breadcrumb-item">事件结果</li>
+        </ul>
+      </div>
+
+      <div class="row">
+        <div class="col-md-12">
+          <div class="tile">
+            <div class="tile-title-w-btn" style="margin: 0 auto 0px auto;padding-top: 0px"><span></span><a  href="#collapseMap" data-toggle="collapse" data-parent="collapse-div"><i class="fa fa-chevron-down fa-lg"></i></a></div>
+            <div class="tile-title-w-btn" style="margin: 0 auto 2px auto;padding-top: 0px">
+                <h3 class="tile-title">事件列表</h3>
+                <div class="toggle lg">
+                  <label>
+                    <input type="checkbox" id="start"><span class="button-indecator label-text" id="indicator">启动</span>
+                  </label>
+                </div>
+            </div>
+            <div class="panel-collapse collapse show" id="collapseMap">
+
+                <div class="table-responsive">
+                  <table class="table" id="sampleTable">
+                    <thead>
+                    <tr>
+                        <th>Ratio</th>
+                        <th>Datetime</th>
+                        <th>ID</th>
+                        <th>ptweet</th>
+                        <th>Translate</th>
+                        <th>Tokens</th>
+                        <th>Freq</th>
+                    </tr>
+                    </thead>
+                    <tbody>
+                    </tbody>
+                  </table>
+                </div>
+            </div>
+          </div>
+        </div>
+      </div>
+        <!--<div class="col-md-12">-->
+          <!--<div class="tile">-->
+            <!--<h3 class="tile-title">Event Map</h3>-->
+            <!--<div class="tile-body">-->
+              <!--<div id="demo-map" style="height: 400px"></div>-->
+            <!--</div>-->
+          <!--</div>-->
+        <!--</div>-->
+
+      </div>
+    </main>
+    <!-- Essential javascripts for application to work-->
+    <script src="{{ url_for('static', filename='js/jquery-3.2.1.min.js') }}"></script>
+    <script src="{{ url_for('static', filename='js/popper.min.js') }}"></script>
+    <script src="{{ url_for('static', filename='js/bootstrap.min.js') }}"></script>
+    <script src="{{ url_for('static', filename='js/main.js') }}"></script>
+    <!-- The javascript plugin to display page loading on top-->
+    <script src="{{ url_for('static', filename='js/plugins/pace.min.js') }}"></script>
+    <!-- Page specific javascripts-->
+    <!-- Data table plugin-->
+    <script type="text/javascript" src="{{ url_for('static', filename='js/plugins/jquery.dataTables.min.js') }}"></script>
+    <script type="text/javascript" src="{{ url_for('static', filename='js/plugins/dataTables.bootstrap.min.js') }}"></script>
+    <script type="text/javascript" src="{{ url_for('static', filename='js/plugins/jquery.vmap.min.js') }}"></script>
+    <script type="text/javascript" src="{{ url_for('static', filename='js/plugins/jquery.vmap.world.js') }}"></script>
+    <script type="text/javascript" src="{{ url_for('static', filename='js/plugins/jquery.vmap.sampledata.js') }}"></script>
+
+    <script type="text/javascript">
+      $("ul > li:nth-child(5) > a").addClass('active')
+        $(document).ready(function(){
+            var t = $('#sampleTable').DataTable( {
+                "order": [[ 2, 'desc' ]]
+            } );
+            var str_array = new Array();
+            var flag = false;
+            var interval_id;
+            var refresh = function () {
+                $.ajax({
+                    type: "get",
+                    data:{"num":5},
+                    dataType: "json",
+                    url: "/fetch_batch_persist",
+                    success: function (msg,status) {
+                        if (msg.ret) {
+                            var data = msg.data;
+                            console.info(data)
+                            for (i in data) {
+                                var values = new Array();
+                                values[0] = JSON.parse(data[i])['ratio']
+                                values[1] = JSON.parse(data[i])['occurtime']
+                                values[2] = JSON.parse(data[i])['id']
+                                values[3] = JSON.parse(data[i])['ptweet']
+                                values[4] = JSON.parse(data[i])['trans']
+                                values[5] = JSON.parse(data[i])['tokens']
+                                values[6] = JSON.parse(data[i])['freq']
+                                console.info(values)
+                                t.row.add(values).draw()
+                            }
+                        }
+                    },
+                    error: function () {
+                        alert("查询失败")
+                    }
+                });
+
+            }
+
+            var interval_id;
+            $("#start").click(function () {
+              if ($("#start").prop('checked')== true) {
+                interval_id = setInterval(refresh,5000);
+                console.info(interval_id);
+              }  else {
+                $("#indicator").text('暂停')
+                clearInterval(interval_id);
+              }
+            });
+        });
+    </script>
+{%endblock%}

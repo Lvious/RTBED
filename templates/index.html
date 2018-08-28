@@ -1,0 +1,310 @@
+{% extends "base.html" %}
+{% block head %}
+    <!--Site icon-->
+    <link rel="shortcut icon" href="{{ url_for('static', filename='images/favicon.ico') }}" type="image/x-icon" />
+    <!-- Main CSS-->
+    <link rel="stylesheet" type="text/css" href="{{ url_for('static', filename='css/main.css') }}">
+    <link rel="stylesheet" type="text/css" href="{{ url_for('static', filename='css/jquery-jvectormap-2.0.3.css') }}">
+    <link rel="stylesheet" type="text/css" href="{{ url_for('static', filename='css/epoch.min.css') }}">
+    <!-- Font-icon css-->
+    <link rel="stylesheet" type="text/css" href="https://maxcdn.bootstrapcdn.com/font-awesome/4.7.0/css/font-awesome.min.css">
+{% endblock %}
+{% block navbar%}{% endblock %}
+{% block siderbar%}{%endblock%}
+{%block content%}
+    <main class="app-content">
+      <div class="row">
+        <div class="col-md-6 col-lg-3">
+          <div class="widget-small primary coloured-icon"><i class="icon fa fa-twitter fa-3x"></i>
+            <div class="info">
+              <h4>Tweets</h4>
+              <p id="num_tweets"><b>0</b></p>
+            </div>
+          </div>
+        </div>
+        <div class="col-md-6 col-lg-3">
+          <div class="widget-small info coloured-icon"><i class="icon fa fa-calculator fa-3x"></i>
+            <div class="info">
+              <h4>Event Count</h4>
+              <p id="num_count"><b>0</b></p>
+            </div>
+          </div>
+        </div>
+        <div class="col-md-6 col-lg-3">
+          <div class="widget-small warning coloured-icon"><i class="icon fa fa-line-chart fa-3x"></i>
+            <div class="info">
+              <h4>Current Ratio</h4>
+              <p id="num_ratio"><b>0.0</b></p>
+            </div>
+          </div>
+        </div>
+        <div class="col-md-6 col-lg-3">
+          <div class="widget-small danger coloured-icon"><i class="icon fa fa-signal fa-3x"></i>
+            <div class="info">
+              <h4>Current Freq</h4>
+              <p id="num_freq"><b>0.0</b></p>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <div class="row">
+        <div class="col-md-6">
+          <div class="tile" style="padding-top: 0px;">
+            <div class="tile-title-w-btn" style="margin: 0 auto 0px auto;padding-top: 0px"><span></span><a  href="#collapseMap" data-toggle="collapse" data-parent="collapse-div"><i class="fa fa-chevron-down fa-lg"></i></a></div>
+            <div class="tile-title-w-btn" style="margin: 0 auto 2px auto;padding-top: 0px">
+              <h3 class="title">Event Map</h3>
+              <div class="toggle lg">
+                  <label>
+                    <input type="checkbox" id="start"><span class="button-indecator label-text" id="indicator">启动</span>
+                  </label>
+              </div>
+            </div>
+            <div class="panel-collapse collapse show" id="collapseMap">
+              <div class="tile-body">
+                <div id="demo-map" style="height: 400px"></div>
+              </div>
+            </div>
+          </div>
+        </div>
+        <div class="col-md-6">
+          <div class="tile" style="padding-top: 0px;">
+            <div class="tile-title-w-btn" style="margin: 0 auto 0px auto;padding-top: 0px"><span></span><a  href="#collapseChart" data-toggle="collapse" data-parent="collapse-div"><i class="fa fa-chevron-down fa-lg"></i></a></div>
+            <h3 class="tile-title">Tweets Burstness</h3>
+            <div class="panel-collapse collapse show" id="collapseChart">
+              <div class="epoch" style="height: 392px; position: relative;" id="series"></div>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <div class="row">
+        <div class="col-md-12">
+          <div class="tile">
+            <div class="tile-title-w-btn" style="margin: 0 auto 0px auto;padding-top: 0px"><span></span><a  href="#collapse" data-toggle="collapseTable" data-parent="collapse-div"><i class="fa fa-chevron-down fa-lg"></i></a></div>
+            <div class="tile-title-w-btn" style="margin: 0 auto 2px auto;padding-top: 0px">
+                <h3 class="tile-title">事件列表</h3>
+            </div>
+            <div class="panel-collapse collapse show" id="collapseTable">
+
+                <div class="table-responsive">
+                  <table class="table" id="sampleTable">
+                    <thead>
+                    <tr>
+                        <th>Datetime</th>
+                        <th>LocName</th>
+                        <th>ID</th>
+                        <th>Tweet</th>
+                        <th>Translate</th>
+                        <th>Ratio</th>
+                        <th>Freq</th>
+                    </tr>
+                    </thead>
+                    <tbody>
+                    </tbody>
+                  </table>
+                </div>
+            </div>
+          </div>
+        </div>
+      </div>
+
+
+      <!--<div class="row">-->
+        <!--<div class="col-md-6">-->
+          <!--<div class="tile" style="padding-top: 0px;">-->
+            <!--<div class="tile-title-w-btn" style="margin: 0 auto 0px auto;padding-top: 0px"><span></span><a  href="#collapseChart" data-toggle="collapse" data-parent="collapse-div"><i class="fa fa-chevron-down fa-lg"></i></a></div>-->
+            <!--<h3 class="tile-title">Tweets Freqency</h3>-->
+            <!--<div class="panel-collapse collapse show" id="collapseChart">-->
+              <!--<div class="epoch" style="height: 318px; position: relative;" id="series"></div>-->
+            <!--</div>-->
+          <!--</div>-->
+        <!--</div>-->
+        <!--<div class="col-md-6">-->
+          <!--<div class="tile" style="padding-top: 0px;">-->
+            <!--<div class="tile-title-w-btn" style="margin: 0 auto 0px auto;padding-top: 0px"><span></span><a  href="#collapsePie" data-toggle="collapse" data-parent="collapse-div"><i class="fa fa-chevron-down fa-lg"></i></a></div>-->
+            <!--<h3 class="tile-title">Sentiment Ratio</h3>-->
+            <!--<div class="panel-collapse collapse show" id="collapsePie">-->
+              <!--<div class="embed-responsive embed-responsive-16by9">-->
+                <!--<canvas class="embed-responsive-item" id="pieChartDemo"></canvas>-->
+              <!--</div>-->
+            <!--</div>-->
+          <!--</div>-->
+        <!--</div>-->
+      <!--</div>-->
+    </main>
+
+    <!-- Essential javascripts for application to work-->
+    <script src="{{ url_for('static', filename='js/jquery-3.2.1.min.js') }}"></script>
+    <script src="{{ url_for('static', filename='js/popper.min.js') }}"></script>
+    <script src="{{ url_for('static', filename='js/bootstrap.min.js') }}"></script>
+    <script src="{{ url_for('static', filename='js/main.js') }}"></script>
+    <!-- The javascript plugin to display page loading on top-->
+    <script src="{{ url_for('static', filename='js/plugins/pace.min.js') }}"></script>
+    <!-- Page specific javascripts-->
+    <script type="text/javascript" src="{{ url_for('static', filename='js/plugins/chart.js') }}"></script>
+    <script type="text/javascript" src="{{ url_for('static', filename='js/plugins/jquery.dataTables.min.js') }}"></script>
+    <script type="text/javascript" src="{{ url_for('static', filename='js/plugins/dataTables.bootstrap.min.js') }}"></script>
+    <script type="text/javascript" src="{{ url_for('static', filename='js/plugins/jquery-jvectormap-2.0.3.min.js') }}"></script>
+    <script type="text/javascript" src="{{ url_for('static', filename='js/plugins/jquery-jvectormap-world-mill.js') }}"></script>
+    <script type="text/javascript" src="{{ url_for('static', filename='js/plugins/d3.min.js') }}"></script>
+    <script type="text/javascript" src="{{ url_for('static', filename='js/plugins/epoch.min.js') }}"></script>
+    <script type="text/javascript" src="{{ url_for('static', filename='js/plugins/data.js') }}"></script>
+    <script type="text/javascript">
+      var data = {
+      	labels: ["January", "February", "March", "April", "May"],
+      	datasets: [
+      		{
+      			label: "Tweets Freqency",
+      			fillColor: "rgba(220,220,220,0.2)",
+      			strokeColor: "rgba(220,220,220,1)",
+      			pointColor: "rgba(220,220,220,1)",
+      			pointStrokeColor: "#fff",
+      			pointHighlightFill: "#fff",
+      			pointHighlightStroke: "rgba(220,220,220,1)",
+      			data: [6500, 5900, 8001, 8123, 7645]
+      		},
+      		{
+      			label: "User Freqency",
+      			fillColor: "rgba(151,187,205,0.2)",
+      			strokeColor: "rgba(151,187,205,1)",
+      			pointColor: "rgba(151,187,205,1)",
+      			pointStrokeColor: "#fff",
+      			pointHighlightFill: "#fff",
+      			pointHighlightStroke: "rgba(151,187,205,1)",
+      			data: [5845, 6823, 6031, 4911, 6698]
+      		}
+      	]
+      };
+      var pdata = [
+      	{
+      		value: 300,
+      		color: "#46BFBD",
+      		highlight: "#5AD3D1",
+      		label: "Complete"
+      	},
+      	{
+      		value: 350,
+      		color:"#F7464A",
+      		highlight: "#FF5A5E",
+      		label: "In-Progress"
+      	}
+      ]
+
+//      var ctxl = $("#lineChartDemo").get(0).getContext("2d");
+//      var lineChart = new Chart(ctxl).Line(data);
+
+      var ctxp = $("#pieChartDemo").get(0).getContext("2d");
+      var pieChart = new Chart(ctxp).Pie(pdata);
+    </script>
+
+    <script type="text/javascript">
+      $("ul > li:nth-child(1) > a").addClass('active')
+      var mapObj = new jvm.Map({
+          container: $('#demo-map'),
+          map: 'world_mill',
+          normalizeFunction: 'polynomial',
+          hoverOpacity: 0.7,
+          hoverColor: false,
+          markerStyle: {
+              initial: {
+                  fill: '#F8E23B',
+                  stroke: '#383f47'
+              }
+          },
+          backgroundColor: '#383f47',
+          markers: [],
+          series: {
+              markers: [{
+                  attribute: 'r',
+                  scale: [5, 20],
+                  values: [],
+                  min: 0,
+                  max: 20
+                }
+              ]
+          }
+
+      });
+      var t = $('#sampleTable').DataTable( {
+            "order": [[ 2, 'desc' ]]
+      });
+      var mapMarkers = [];
+      var vals = [];
+
+      var chart = $('#series').epoch({
+          type: 'time.bar',
+          data: [{values:[],range:[]}],
+          axes: ['left', 'bottom', 'right']
+      });
+      var count=0;
+      var freshlocs = function() {
+          $.ajax({
+              type: "get",
+              dataType: "json",
+              url: "/getlocs",
+              success: function (msg,status) {
+                  if (msg.ret) {
+                      var data = msg.data;
+//                      console.log(data);
+                      for (i in data) {
+                          console.log(data[i]);
+                          var _temp = JSON.parse(data[i]);
+                          text      = _temp['text'];
+                          dtime     = _temp['created_at'];
+                          locName   = _temp['locName'];
+                          val_ratio = _temp['ratio'].toFixed(2);
+                          val_freq  = _temp['freq'].toFixed(2);
+                          trans     = _temp['trans'];
+                          id        = _temp['id'];
+                          et_count  = _temp['count'];
+                          var table_row = new Array();
+                          table_row[0] = dtime;
+                          table_row[1] = locName;
+                          table_row[2] = id
+                          table_row[3] = text;
+                          table_row[4] = trans;
+                          table_row[5] = val_ratio;
+                          table_row[6] = val_freq;
+                          markName = dtime+' | '+locName+' | '+text+" | "+val_ratio*val_freq*60;
+                          markCoord = _temp['loc'];
+                          console.log(markCoord);
+                          mapMarkers.push({name: markName, latLng: markCoord.reverse()});
+                          vals.push(val_ratio*val_freq*10);
+                          chart.push([{time:Date.parse(new Date(dtime))/1000|0,y:val_ratio*val_freq*10}]);
+                          t.row.add(table_row).draw()
+                          $("#num_ratio").text(val_ratio);
+                          $("#num_count").text(et_count);
+                          $("#num_ratio").text(val_ratio);
+                          $("#num_freq").text(val_freq);
+                      }
+                      if (mapMarkers.length>20 && vals.length>20){
+
+                          rmMarker = mapMarkers.shift();
+                          rmval = vals.shift();
+                          mapObj.removeMarkers([count%19])
+                          count+=1
+                      }
+                      mapObj.addMarkers(mapMarkers, []);
+                      mapObj.series.markers[0].setValues(vals)
+                  }
+              },
+              error: function () {
+                  alert("查询失败")
+              }
+          });
+      };
+
+      var interval_id;
+      $("#start").click(function () {
+          if ($("#start").prop('checked')== true) {
+            interval_id = setInterval(freshlocs,5000);
+            console.info(interval_id);
+          }  else {
+            $("#indicator").text('暂停')
+            clearInterval(interval_id);
+          }
+       });
+
+    </script>
+{%endblock%}
